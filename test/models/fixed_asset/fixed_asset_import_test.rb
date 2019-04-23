@@ -93,7 +93,7 @@ module FixedAssetTest
 
       assert fa.save
 
-      state, _ = fa.start_up
+      state, _ = fa.start_up!
       assert state
       fa.reload
 

@@ -126,7 +126,7 @@ class FixedAssetTest::FixedAssetTest < ActiveSupport::TestCase
 
     # test when in_use fixed asset
 
-    assert fixed_asset.start_up
+    assert fixed_asset.start_up!
 
     assert_equal 150_000.00, fixed_asset.journal_entry.real_credit
     assert_equal 150_000.00, fixed_asset.journal_entry.real_debit
@@ -145,7 +145,7 @@ class FixedAssetTest::FixedAssetTest < ActiveSupport::TestCase
     # test when sold fixed asset
 
     fixed_asset.sold_on = @sold_on
-    assert fixed_asset.sell
+    assert fixed_asset.sell!
 
     fixed_asset.reload
 
@@ -305,8 +305,38 @@ class FixedAssetTest::FixedAssetTest < ActiveSupport::TestCase
     }
 
     fa = FixedAsset.create!(attributes)
-    assert fa.start_up
-    assert_not fa.sell
+    assert fa.start_up!
+
+    fa.sold_on = Date.new 2020, 5, 8
+    assert_not fa.sell!
+  end
+
+  test 'cannot scrap a FixedAsset if the scrapped_on date is not during an opened FinancialYear' do
+    FinancialYear.delete_all
+    [2017, 2018].each do |year|
+      start = Date.new year, 3, 1
+      FinancialYear.create! started_on: start, stopped_on: start + 1.year - 1.day
+    end
+
+    attributes = {
+      name: @product.name,
+      depreciable_amount: 50_000,
+      depreciation_method: :linear,
+      started_on: Date.new(2017, 3, 1),
+      depreciation_period: :yearly,
+      depreciation_percentage: 20.00,
+      asset_account: @asset_account,
+      allocation_account: @allocation_account,
+      expenses_account: @expenses_account,
+      product: @product,
+      journal_id: @journal.id
+    }
+
+    fa = FixedAsset.create!(attributes)
+    assert fa.start_up!
+
+    fa.scrapped_on = Date.new 2020, 5, 8
+    assert_not fa.scrap!
   end
 
   test 'cannot create a FixedAsset when no FinancialYear present in database' do
