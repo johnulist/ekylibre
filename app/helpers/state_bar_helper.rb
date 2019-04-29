@@ -1,0 +1,87 @@
+module StateBarHelper
+  Colors = {
+    intermediate: %i[draft],
+    validated: %i[in_use won invoice order done given finished ongoing repaid],
+    rejected: %i[sold scrapped lost refused aborted]
+  }.flat_map { |key, values| values.map { |v| [v, key] } }
+             .group_by(&:first)
+             .map { |key, values| [key, values.first.second] }.to_h
+
+  def self.color_for(state, default = :intermediate)
+    Colors[state.to_sym] || default
+  end
+
+  class StateBar
+    attr_reader :buttons
+
+    def initialize(*buttons, transitions_enabled: true)
+      @buttons = buttons
+      @transitions_enabled = transitions_enabled
+    end
+
+    def transitions_enabled?
+      @transitions_enabled
+    end
+  end
+
+  class Button
+    attr_reader :name
+
+    def initialize(name, transition:, current: false, label: nil)
+      @name = name
+      @transition = transition
+      @current = current
+      @label = label
+    end
+
+    def current?
+      @current
+    end
+
+    def enabled?
+      @transition.present?
+    end
+
+    def label
+      @label || name.human_name
+    end
+
+    def event
+      @transition.event if @transition
+    end
+
+    def title
+      event&.ta
+    end
+
+    def styles
+      additional = [type_style, state_style].compact.map { |s| "state-bar__state--#{s}" }
+      ['state-bar__state', *additional]
+    end
+
+    def state_style
+      return :current if current?
+      return :disabled unless enabled?
+      nil
+    end
+
+    def type_style
+      StateBarHelper.color_for name
+    end
+  end
+
+  def state_bar(resource, options = {})
+    sb = StateBarBuilder.new(resource, :state, options).build
+
+    render 'state_bar', resource: resource, state_bar: sb
+  end
+
+  def main_state_bar(resource, options = {}, &block)
+    content_for(:main_statebar, state_bar(resource, options, &block))
+  end
+
+  def main_state_bar_tag
+    content_for(:main_statebar) if content_for?(:main_statebar)
+  end
+
+end
