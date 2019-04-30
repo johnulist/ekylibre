@@ -37,7 +37,7 @@ class StateBarBuilder
     end
 
     def states_from(resource)
-      return states_from_transitionable resource if resource.class < Transitionable
+      return states_from_transitionable resource if defined?(Transitionable) && resource.class < Transitionable
 
       states_from_state_machine resource
     end
@@ -58,7 +58,7 @@ class StateBarBuilder
     end
 
     def extract_possible_transitions_from(resource)
-      return extract_possible_transitions_from_transitionable resource if resource.class < Transitionable
+      return extract_possible_transitions_from_transitionable resource if defined?(Transitionable) && resource.class < Transitionable
 
       extract_possible_transitions_from_state_machine resource
     end
