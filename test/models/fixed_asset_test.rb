@@ -76,15 +76,15 @@ class FixedAssetTest < ActiveSupport::TestCase
 
     @building_division_variant = ProductNatureVariant.import_from_nomenclature(:building_division)
     @storage = BuildingDivision.create!(
-      variant: @building_division_variant,
-      name: 'Tractor Stockage',
-      initial_shape: Charta.new_geometry('SRID=4326;MULTIPOLYGON(((-0.813218951225281 45.5985699786537,-0.813113003969193 45.5985455816635,-0.81300538033247 45.5987766488858,-0.813106298446655 45.5987876744046,-0.813218951225281 45.5985699786537)))')
+        variant: @building_division_variant,
+        name: 'Tractor Stockage',
+        initial_shape: Charta.new_geometry('SRID=4326;MULTIPOLYGON(((-0.813218951225281 45.5985699786537,-0.813113003969193 45.5985455816635,-0.81300538033247 45.5987766488858,-0.813106298446655 45.5987876744046,-0.813218951225281 45.5985699786537)))')
     )
 
     @product = @variant.products.create!(
-      initial_container: @storage,
-      initial_population: 1,
-      name: 'JD 5201'
+        initial_container: @storage,
+        initial_population: 1,
+        name: 'JD 5201'
     )
 
     currency = 'EUR'
@@ -105,17 +105,17 @@ class FixedAssetTest < ActiveSupport::TestCase
 
   test 'simple fixed asset creation with tractor' do
     attributes = {
-      name: @product.name,
-      depreciable_amount: 150_000,
-      depreciation_method: :linear,
-      started_on: @started_on,
-      depreciation_period: :monthly,
-      depreciation_percentage: 10.00,
-      asset_account: @asset_account,
-      allocation_account: @allocation_account,
-      expenses_account: @expenses_account,
-      product: @product,
-      journal_id: @journal.id
+        name: @product.name,
+        depreciable_amount: 150_000,
+        depreciation_method: :linear,
+        started_on: @started_on,
+        depreciation_period: :monthly,
+        depreciation_percentage: 10.00,
+        asset_account: @asset_account,
+        allocation_account: @allocation_account,
+        expenses_account: @expenses_account,
+        product: @product,
+        journal_id: @journal.id
     }
 
     fixed_asset = FixedAsset.create!(attributes)
@@ -154,7 +154,7 @@ class FixedAssetTest < ActiveSupport::TestCase
 
     assert_equal 833.33, fourth_f_d.amount
     assert_equal 833.33, fourth_f_d.journal_entry.real_credit
-    assert_equal Date.parse('2017-04-30'), fourth_f_d.journal_entry.printed_on
+    assert_equal @sold_on, fourth_f_d.journal_entry.printed_on
     assert_equal 150_000.00, fixed_asset.sold_journal_entry.real_credit
     assert_equal @sold_on, fixed_asset.sold_journal_entry.printed_on
   end
@@ -173,18 +173,18 @@ class FixedAssetTest < ActiveSupport::TestCase
   test 'Fixed asset with regressive depreciation' do
     started_on = Date.parse('2018-06-15')
     attributes = {
-      name: @product.name,
-      depreciable_amount: 50_000,
-      depreciation_method: :regressive,
-      started_on: started_on,
-      depreciation_period: :yearly,
-      depreciation_percentage: 20.00,
-      depreciation_fiscal_coefficient: 1.75,
-      asset_account: @asset_account,
-      allocation_account: @allocation_account,
-      expenses_account: @expenses_account,
-      product: @product,
-      journal_id: @journal.id
+        name: @product.name,
+        depreciable_amount: 50_000,
+        depreciation_method: :regressive,
+        started_on: started_on,
+        depreciation_period: :yearly,
+        depreciation_percentage: 20.00,
+        depreciation_fiscal_coefficient: 1.75,
+        asset_account: @asset_account,
+        allocation_account: @allocation_account,
+        expenses_account: @expenses_account,
+        product: @product,
+        journal_id: @journal.id
     }
 
     fixed_asset = FixedAsset.create!(attributes)
@@ -203,18 +203,18 @@ class FixedAssetTest < ActiveSupport::TestCase
   test 'a fixed asset with regressive depreciation and all mandatory parameters should be valid' do
     started_on = Date.parse('2018-06-15')
     attributes = {
-      name: @product.name,
-      depreciable_amount: 50_000,
-      depreciation_method: :regressive,
-      started_on: started_on,
-      depreciation_period: :yearly,
-      depreciation_percentage: 20.00,
-      depreciation_fiscal_coefficient: 1.75,
-      asset_account: @asset_account,
-      allocation_account: @allocation_account,
-      expenses_account: @expenses_account,
-      product: @product,
-      journal_id: @journal.id
+        name: @product.name,
+        depreciable_amount: 50_000,
+        depreciation_method: :regressive,
+        started_on: started_on,
+        depreciation_period: :yearly,
+        depreciation_percentage: 20.00,
+        depreciation_fiscal_coefficient: 1.75,
+        asset_account: @asset_account,
+        allocation_account: @allocation_account,
+        expenses_account: @expenses_account,
+        product: @product,
+        journal_id: @journal.id
     }
 
     fixed_asset = FixedAsset.create!(attributes)
@@ -225,12 +225,12 @@ class FixedAssetTest < ActiveSupport::TestCase
 
   test 'stopped_on, allocation_account, expenses_account are not mandatory when a FixedAsset uses the :none depreciation method' do
     attributes = {
-      name: @product.name,
-      depreciable_amount: 50_000,
-      depreciation_method: :none,
-      started_on: Date.parse('2018-06-15'),
-      asset_account: @asset_account,
-      journal_id: @journal.id
+        name: @product.name,
+        depreciable_amount: 50_000,
+        depreciation_method: :none,
+        started_on: Date.parse('2018-06-15'),
+        asset_account: @asset_account,
+        journal_id: @journal.id
     }
 
     fixed_asset = FixedAsset.new attributes
@@ -241,12 +241,12 @@ class FixedAssetTest < ActiveSupport::TestCase
 
   test 'a FixedAsset depreciated with :none method should not have any FixedAssetDepreciation' do
     attributes = {
-      name: @product.name,
-      depreciable_amount: 50_000,
-      depreciation_method: :none,
-      started_on: Date.parse('2018-06-15'),
-      asset_account: @asset_account,
-      journal_id: @journal.id
+        name: @product.name,
+        depreciable_amount: 50_000,
+        depreciation_method: :none,
+        started_on: Date.parse('2018-06-15'),
+        asset_account: @asset_account,
+        journal_id: @journal.id
     }
 
     fixed_asset = FixedAsset.create! attributes
@@ -262,17 +262,17 @@ class FixedAssetTest < ActiveSupport::TestCase
     end
 
     attributes = {
-      name: @product.name,
-      depreciable_amount: 50_000,
-      depreciation_method: :linear,
-      started_on: Date.new(2017, 3, 1),
-      depreciation_period: :yearly,
-      depreciation_percentage: 10.00,
-      asset_account: @asset_account,
-      allocation_account: @allocation_account,
-      expenses_account: @expenses_account,
-      product: @product,
-      journal_id: @journal.id
+        name: @product.name,
+        depreciable_amount: 50_000,
+        depreciation_method: :linear,
+        started_on: Date.new(2017, 3, 1),
+        depreciation_period: :yearly,
+        depreciation_percentage: 10.00,
+        asset_account: @asset_account,
+        allocation_account: @allocation_account,
+        expenses_account: @expenses_account,
+        product: @product,
+        journal_id: @journal.id
     }
 
     fa = FixedAsset.create!(attributes)
@@ -288,17 +288,17 @@ class FixedAssetTest < ActiveSupport::TestCase
     end
 
     attributes = {
-      name: @product.name,
-      depreciable_amount: 50_000,
-      depreciation_method: :linear,
-      started_on: Date.new(2017, 3, 1),
-      depreciation_period: :yearly,
-      depreciation_percentage: 20.00,
-      asset_account: @asset_account,
-      allocation_account: @allocation_account,
-      expenses_account: @expenses_account,
-      product: @product,
-      journal_id: @journal.id
+        name: @product.name,
+        depreciable_amount: 50_000,
+        depreciation_method: :linear,
+        started_on: Date.new(2017, 3, 1),
+        depreciation_period: :yearly,
+        depreciation_percentage: 20.00,
+        asset_account: @asset_account,
+        allocation_account: @allocation_account,
+        expenses_account: @expenses_account,
+        product: @product,
+        journal_id: @journal.id
     }
 
     fa = FixedAsset.create!(attributes)
@@ -326,15 +326,15 @@ class FixedAssetTest < ActiveSupport::TestCase
     end
 
     fa = FixedAsset.new(
-      name: @product.name,
-      depreciable_amount: 50_000,
-      depreciation_method: :linear,
-      depreciation_percentage: 10,
-      started_on: '2008-01-01',
-      journal: @journal,
-      asset_account: @asset_account,
-      expenses_account: @expenses_account,
-      allocation_account: @allocation_account
+        name: @product.name,
+        depreciable_amount: 50_000,
+        depreciation_method: :linear,
+        depreciation_percentage: 10,
+        started_on: '2008-01-01',
+        journal: @journal,
+        asset_account: @asset_account,
+        expenses_account: @expenses_account,
+        allocation_account: @allocation_account
     )
 
     assert fa.save
@@ -358,15 +358,15 @@ class FixedAssetTest < ActiveSupport::TestCase
     end
 
     fa = FixedAsset.new(
-      name: @product.name,
-      depreciable_amount: 50_000,
-      depreciation_method: :linear,
-      depreciation_percentage: 10,
-      started_on: '2008-01-01',
-      journal: @journal,
-      asset_account: @asset_account,
-      expenses_account: @expenses_account,
-      allocation_account: @allocation_account
+        name: @product.name,
+        depreciable_amount: 50_000,
+        depreciation_method: :linear,
+        depreciation_percentage: 10,
+        started_on: '2008-01-01',
+        journal: @journal,
+        asset_account: @asset_account,
+        expenses_account: @expenses_account,
+        allocation_account: @allocation_account
     )
 
     assert fa.save
@@ -415,56 +415,6 @@ class FixedAssetTest < ActiveSupport::TestCase
     end
 
     attributes = {
-      name: @product.name,
-      depreciable_amount: 50_000,
-      depreciation_method: :linear,
-      started_on: Date.new(2017, 3, 1),
-      depreciation_period: :yearly,
-      depreciation_percentage: 20.00,
-      asset_account: @asset_account,
-      allocation_account: @allocation_account,
-      expenses_account: @expenses_account,
-      product: @product,
-      journal_id: @journal.id
-    }
-
-    fa = FixedAsset.create!(attributes)
-    assert fa.start_up
-    assert_not fa.sell
-  end
-
-  test 'cannot create a FixedAsset when no FinancialYear present in database' do
-    FinancialYear.delete_all
-
-    attributes = {
-      name: @product.name,
-      depreciable_amount: 50_000,
-      depreciation_method: :linear,
-      started_on: Date.new(2017, 3, 1),
-      depreciation_period: :yearly,
-      depreciation_percentage: 20.00,
-      asset_account: @asset_account,
-      allocation_account: @allocation_account,
-      expenses_account: @expenses_account,
-      product: @product,
-      journal_id: @journal.id
-    }
-
-    fa = FixedAsset.new attributes
-    assert_not fa.valid?
-    assert fa.errors.messages.key? :base
-  end
-
-  [
-    [:opened, false],
-    [:closed, false],
-    [:locked, true]
-  ].each do |(fy_state, expected_validation_result)|
-    test "a FixedAsset without a FinancialYear but after one that is #{fy_state} should be #{expected_validation_result ? 'valid' : 'invalid'}" do
-      FinancialYear.delete_all
-      FinancialYear.create! started_on: Date.new(2015, 3, 1), stopped_on: Date.new(2015, 3, 1) + 1.year - 1.day, state: fy_state
-
-      attributes = {
         name: @product.name,
         depreciable_amount: 50_000,
         depreciation_method: :linear,
@@ -476,6 +426,56 @@ class FixedAssetTest < ActiveSupport::TestCase
         expenses_account: @expenses_account,
         product: @product,
         journal_id: @journal.id
+    }
+
+    fa = FixedAsset.create!(attributes)
+    assert fa.start_up
+    assert_not fa.sell
+  end
+
+  test 'cannot create a FixedAsset when no FinancialYear present in database' do
+    FinancialYear.delete_all
+
+    attributes = {
+        name: @product.name,
+        depreciable_amount: 50_000,
+        depreciation_method: :linear,
+        started_on: Date.new(2017, 3, 1),
+        depreciation_period: :yearly,
+        depreciation_percentage: 20.00,
+        asset_account: @asset_account,
+        allocation_account: @allocation_account,
+        expenses_account: @expenses_account,
+        product: @product,
+        journal_id: @journal.id
+    }
+
+    fa = FixedAsset.new attributes
+    assert_not fa.valid?
+    assert fa.errors.messages.key? :base
+  end
+
+  [
+      [:opened, false],
+      [:closed, false],
+      [:locked, true]
+  ].each do |(fy_state, expected_validation_result)|
+    test "a FixedAsset without a FinancialYear but after one that is #{fy_state} should be #{expected_validation_result ? 'valid' : 'invalid'}" do
+      FinancialYear.delete_all
+      FinancialYear.create! started_on: Date.new(2015, 3, 1), stopped_on: Date.new(2015, 3, 1) + 1.year - 1.day, state: fy_state
+
+      attributes = {
+          name: @product.name,
+          depreciable_amount: 50_000,
+          depreciation_method: :linear,
+          started_on: Date.new(2017, 3, 1),
+          depreciation_period: :yearly,
+          depreciation_percentage: 20.00,
+          asset_account: @asset_account,
+          allocation_account: @allocation_account,
+          expenses_account: @expenses_account,
+          product: @product,
+          journal_id: @journal.id
       }
 
       fa = FixedAsset.new attributes
