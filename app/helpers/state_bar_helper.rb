@@ -1,8 +1,8 @@
 module StateBarHelper
   Colors = {
     intermediate: %i[draft],
-    validated: %i[in_use won invoice order done given finished ongoing repaid],
-    rejected: %i[sold scrapped lost refused aborted]
+    rejected: %i[aborted lost refused scrapped sold],
+    validated: %i[done finished given in_use invoice ongoing order repaid won]
   }.flat_map { |key, values| values.map { |v| [v, key] } }
              .group_by(&:first)
              .map { |key, values| [key, values.first.second] }.to_h
