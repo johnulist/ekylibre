@@ -14,6 +14,8 @@ module StateBarHelper
   class StateBar
     attr_reader :buttons
 
+    # Creates a StateBar with the provided buttons.
+    # If `transitions_enabled` is false, buttons should not be rendered as clickable
     def initialize(*buttons, transitions_enabled: true)
       @buttons = buttons
       @transitions_enabled = transitions_enabled
@@ -27,6 +29,8 @@ module StateBarHelper
   class Button
     attr_reader :name
 
+    # Creates a Button
+    # If `label` is provided, it will replace the default value (+human_name+ of the +name+ parameter)
     def initialize(name, transition:, current: false, label: nil)
       @name = name
       @transition = transition
