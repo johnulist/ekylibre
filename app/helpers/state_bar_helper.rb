@@ -73,7 +73,7 @@ module StateBarHelper
   def state_bar(resource, options = {})
     sb = StateBarBuilder.new(resource, :state, options).build
 
-    render 'state_bar', resource: resource, state_bar: sb
+    render 'helpers/state-bar/state_bar', resource: resource, state_bar: sb
   end
 
   def main_state_bar(resource, options = {}, &block)
